@@ -26,7 +26,11 @@ extern IMU IMU1;
 
 class LCDscreen
 {
+private:
+    void drawB(int32_t angle, int32_t rectY, uint32_t color);
+
 public:
     void setup1();
     void printLCD();
+    void drawBars();
 };

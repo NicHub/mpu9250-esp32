@@ -30,4 +30,5 @@ public:
     void printWhoAmI();
     void printMagCalibration();
     void printSerialDebug();
+    void printMinMax();
 };

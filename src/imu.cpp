@@ -57,11 +57,11 @@ bool IMU::readMPU9250()
         // corrections
         // Get actual magnetometer value, this depends on scale being set
         this->mx = (float)this->magCount[0] * this->mRes * this->magCalibration[0] -
-                 this->magbias[0];
+                   this->magbias[0];
         this->my = (float)this->magCount[1] * this->mRes * this->magCalibration[1] -
-                 this->magbias[1];
+                   this->magbias[1];
         this->mz = (float)this->magCount[2] * this->mRes * this->magCalibration[2] -
-                 this->magbias[2];
+                   this->magbias[2];
     } // if (readByte(MPU9250_ADDRESS, INT_STATUS) & 0x01)
 
     // Must be called before updating quaternions!
@@ -106,13 +106,13 @@ bool IMU::readMPU9250()
     // http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
     // which has additional links.
     this->yaw = atan2(2.0f * (*(getQ() + 1) * *(getQ() + 2) + *getQ() *
-                                                                *(getQ() + 3)),
-                    *getQ() * *getQ() + *(getQ() + 1) * *(getQ() + 1) - *(getQ() + 2) * *(getQ() + 2) - *(getQ() + 3) * *(getQ() + 3));
+                                                                  *(getQ() + 3)),
+                      *getQ() * *getQ() + *(getQ() + 1) * *(getQ() + 1) - *(getQ() + 2) * *(getQ() + 2) - *(getQ() + 3) * *(getQ() + 3));
     this->pitch = -asin(2.0f * (*(getQ() + 1) * *(getQ() + 3) - *getQ() *
-                                                                  *(getQ() + 2)));
+                                                                    *(getQ() + 2)));
     this->roll = atan2(2.0f * (*getQ() * *(getQ() + 1) + *(getQ() + 2) *
-                                                           *(getQ() + 3)),
-                     *getQ() * *getQ() - *(getQ() + 1) * *(getQ() + 1) - *(getQ() + 2) * *(getQ() + 2) + *(getQ() + 3) * *(getQ() + 3));
+                                                             *(getQ() + 3)),
+                       *getQ() * *getQ() - *(getQ() + 1) * *(getQ() + 1) - *(getQ() + 2) * *(getQ() + 2) + *(getQ() + 3) * *(getQ() + 3));
     this->pitch *= RAD_TO_DEG;
     this->yaw *= RAD_TO_DEG;
     // Declination of SparkFun Electronics (40°05'26.6"N 105°11'05.9"W) is
@@ -125,5 +125,29 @@ bool IMU::readMPU9250()
     this->sumCount = 0;
     this->sum = 0;
 
+    this->angles.A = this->pitch;
+    this->angles.B = this->roll;
+    this->angles.C = this->yaw;
+
     return true;
+}
+
+void IMU::getMinAngle()
+{
+    if (this->pitch < this->min.A)        this->min.A = this->pitch;
+    if (this->roll < this->min.B)        this->min.B = this->roll;
+    if (this->yaw < this->min.C)        this->min.C = this->yaw;
+}
+
+void IMU::getMaxAngle()
+{
+    if (this->pitch > this->max.A)        this->max.A = this->pitch;
+    if (this->roll > this->max.B)        this->max.B = this->roll;
+    if (this->yaw > this->max.C)        this->max.C = this->yaw;
+}
+
+void IMU::resetMinMax()
+{
+    this->min = {1e6, 2e6, 3e6};
+    this->max = {-1e6, -2e6, -3e6};
 }

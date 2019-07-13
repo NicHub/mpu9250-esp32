@@ -82,3 +82,33 @@ void LCDscreen::printLCD()
     M5.Lcd.print((float)IMU1.sumCount / IMU1.sum, 2);
     M5.Lcd.print(" Hz");
 }
+
+void LCDscreen::drawB(int32_t angle, int32_t rectY, uint32_t rectColor)
+{
+#define BKG_COL BLACK
+    if (angle >= 0)
+    {
+        M5.Lcd.fillRect(0, rectY, 160, 50, BKG_COL);
+        M5.Lcd.fillRect(160 + angle, rectY, 160 - angle, 50, BKG_COL);
+        M5.Lcd.fillRect(160, rectY, angle, 50, rectColor);
+    }
+    else
+    {
+        M5.Lcd.fillRect(160, rectY, 160, 50, BKG_COL);
+        M5.Lcd.fillRect(0, rectY, 160 + angle, 50, BKG_COL);
+        M5.Lcd.fillRect(160 + angle, rectY, -angle, 50, rectColor);
+    }
+}
+
+void LCDscreen::drawBars()
+{
+    abc_t angles = IMU1.angles;
+    const float scale = 160.0 / 180.0;
+    angles.A = (int32_t)(angles.A * scale);
+    angles.B = (int32_t)(angles.B * scale);
+    angles.C = (int32_t)(angles.C * scale);
+
+    drawB(angles.A, 10, BLUE);
+    drawB(angles.B, 70, GREEN);
+    drawB(angles.C, 130, CYAN);
+}

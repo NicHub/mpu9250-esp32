@@ -132,3 +132,11 @@ void UART::printSerialDebug()
     Serial.println(" Hz");
     Serial.println("");
 }
+
+void UART::printMinMax()
+{
+    Serial.println("IMU1 min.A | max.A = " + String(IMU1.min.A) + " | " + String(IMU1.max.A));
+    Serial.println("IMU1 min.B | max.B = " + String(IMU1.min.B) + " | " + String(IMU1.max.B));
+    Serial.println("IMU1 min.C | max.C = " + String(IMU1.min.C) + " | " + String(IMU1.max.C));
+    Serial.println("");
+}

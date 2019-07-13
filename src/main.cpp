@@ -19,6 +19,7 @@
  and the Teensy 3.1.
  */
 
+#include <WebServerApp.h>
 #include <M5Stack.h>
 #include <imu.h>
 #include <uart.h>
@@ -28,15 +29,48 @@ IMU IMU1;
 LCDscreen LCD1;
 UART UART1;
 
+/**
+ * printCompilationDateAndTime
+ */
+void printCompilationDateAndTime()
+{
+    Serial.print("###\ncompilation date and time:\n");
+    Serial.print(__DATE__);
+    Serial.print("\n");
+    Serial.print(__TIME__);
+    Serial.print("\n###\n\n");
+}
+
+/**
+ * sendJSON
+ */
+void sendJSONangles()
+{
+    static char jsonMsg[100];
+    abc_t angles = IMU1.angles;
+    sprintf(jsonMsg,
+            "{\"angles\":{\"A\":\"%f\",\"B\":\"%f\",\"C\":\"%f\"}}",
+            angles.A, angles.B, angles.C);
+    ws.textAll(jsonMsg);
+}
+
+/**
+ *
+ */
 void setup()
 {
     M5.begin(LCD, false, true, true);
 
     Wire.begin();
 
+    scanNetwork();
+    setupWebServer();
+    printCompilationDateAndTime();
+
 #if LCD == true
     LCD1.setup1();
 #endif
+
     UART1.begin();
 
     // Calibrate gyro and accelerometers, load biases in bias registers
@@ -52,16 +86,40 @@ void setup()
     UART1.printMagCalibration();
 }
 
+/**
+ *
+ */
 void loop()
 {
+    ArduinoOTA.handle();
+
     bool timeToGo = IMU1.readMPU9250();
-    if (timeToGo)
-    {
+    if (!timeToGo)
+        return;
+
+    IMU1.getMaxAngle();
+    IMU1.getMinAngle();
+
 #if SERIAL_DEBUG == true
-        UART1.printSerialDebug();
+    UART1.printSerialDebug();
+    UART1.printMinMax();
 #endif
+
 #if LCD == true
-        LCD1.printLCD();
-#endif
+    M5.update();
+    // LCD1.printLCD();
+    LCD1.drawBars();
+
+    if (M5.BtnA.wasReleased())
+    {
+        IMU1.resetMinMax();
+        Serial.println("## RESET ##");
+        UART1.printMinMax();
+        delay(1000);
     }
+#endif
+
+    if (!ws.enabled())
+        return;
+    sendJSONangles();
 }
