@@ -1,5 +1,5 @@
 
-# MPU9250 on ESP32
+# M P U 9 2 5 0    on    E S P 3 2
 
 Measure the orientation of a MPU9250 IMU and display the result on a web page served by an ESP32.
 
@@ -18,7 +18,7 @@ The web files must be uploaded on the ESP32 with the following command:
 
 # Credits
 
-The MPU0250 driver comes from the M5Stack project:
+The MPU9250 driver comes from the M5Stack project:
 
 <https://github.com/m5stack/M5Stack/blob/master/src/utility/MPU9250.cpp>
 
