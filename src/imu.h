@@ -40,4 +40,5 @@ public:
     void getMinAngle();
     void getMaxAngle();
     void resetMinMax();
+void resetRateCounter();
 };

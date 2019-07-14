@@ -44,13 +44,21 @@ void printCompilationDateAndTime()
 /**
  * sendJSON
  */
-void sendJSONangles()
+void sendJSON_IMU()
 {
-    static char jsonMsg[100];
+    if (!ws.enabled())
+        return;
+    static char jsonMsg[200];
     abc_t angles = IMU1.angles;
+    const char *formatString =
+        R"rawText({"quaternions":{"q0":"%f","q1":"%f","q2":"%f","q3":"%f"},
+ "angles":{"A":"%f","B":"%f","C":"%f"}})rawText";
+
     sprintf(jsonMsg,
-            "{\"angles\":{\"A\":\"%f\",\"B\":\"%f\",\"C\":\"%f\"}}",
+            formatString,
+            *(getQ() + 0), *(getQ() + 1), *(getQ() + 2), *(getQ() + 3),
             angles.A, angles.B, angles.C);
+
     ws.textAll(jsonMsg);
 }
 
@@ -97,8 +105,10 @@ void loop()
     if (!timeToGo)
         return;
 
+#if false
     IMU1.getMaxAngle();
     IMU1.getMinAngle();
+#endif
 
 #if SERIAL_DEBUG == true
     UART1.printSerialDebug();
@@ -107,8 +117,8 @@ void loop()
 
 #if LCD == true
     M5.update();
-    // LCD1.printLCD();
-    LCD1.drawBars();
+    // LCD1.printLCD(); // Print values as numbers.
+    LCD1.drawBars(); // Print values as bars.
 
     if (M5.BtnA.wasReleased())
     {
@@ -119,7 +129,6 @@ void loop()
     }
 #endif
 
-    if (!ws.enabled())
-        return;
-    sendJSONangles();
+    sendJSON_IMU();
+    IMU1.resetRateCounter();
 }

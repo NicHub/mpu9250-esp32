@@ -1,6 +1,4 @@
 /**
- * A R K A N O I D    O N    E S P 3 2
- *
  * Copyright (C) 2019  Nicolas Jeanmonod, ouilogique.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,6 +32,7 @@ AsyncWebServer server(80);
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
 AsyncEventSource events("/events");
 bool ssidFound = false;
+char apssid[33];
 
 void onWsEvent(AsyncWebSocket *server,
                AsyncWebSocketClient *client,
@@ -44,7 +43,6 @@ void onWsEvent(AsyncWebSocket *server,
 void setupWebServer();
 void inverseBubbleSortIndexes(int inputArray[], int indexes[], int arraySize);
 void scanNetwork();
-
 
 /**
  * onWsEvent
@@ -193,11 +191,67 @@ void onWsEvent(AsyncWebSocket *server,
 }
 
 /**
+ *
+ */
+void writeServerInfoToFile()
+{
+    File file = SPIFFS.open("/infos.json", FILE_WRITE);
+
+    if (!file)
+    {
+        Serial.println("There was an error opening the file for writing");
+        return;
+    }
+
+    file.println("{");
+
+    // ws enabled
+    file.println(
+        R"rawText("ws_enabled":        ")rawText" +
+        String(ws.enabled()) +
+        R"rawText(",)rawText");
+
+    // ws url
+    file.print(
+        R"rawText("ws_url":           ")rawText");
+    file.print(
+        ws.url());
+    file.println(
+        R"rawText(",)rawText");
+
+    // wifi_local_ip
+    file.print(
+        R"rawText("wifi_local_ip":    ")rawText");
+    file.print(WiFi.localIP());
+    file.println(
+        R"rawText(",)rawText");
+
+    // wifi_soft_ap_ip
+    file.print(
+        R"rawText("wifi_soft_ap_ip":  ")rawText");
+    file.print(
+        WiFi.softAPIP());
+    file.println(
+        R"rawText(",)rawText");
+
+    // ap_ssid
+    file.print(
+        R"rawText("ap_ssid":          ")rawText");
+    file.print(
+        apssid);
+    file.println(
+        R"rawText(")rawText");
+
+    file.print("}");
+
+    file.close();
+}
+
+/**
  * setupWebServer
  */
 void setupWebServer()
 {
-    char apssid[33];
     strcpy(apssid, ap_ssid);
     strcat(apssid, WiFi.macAddress().c_str());
     Serial.print("## apssid = ");
@@ -298,6 +352,7 @@ void setupWebServer()
      *
      */
     SPIFFS.begin();
+    writeServerInfoToFile();
 
     /**
      *

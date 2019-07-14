@@ -83,9 +83,8 @@ bool IMU::readMPU9250()
     // Serial print and/or display at 0.5 s rate independent of data rates
     this->delt_t = millis() - this->count;
 
-    // update LCD once per half-second independent of read rate
-    // if (this->delt_t > 500)
-    bool timeToGo = this->delt_t > 500;
+    // update LCD independent of read rate
+    bool timeToGo = this->delt_t > IMU_REFRESH_MS;
     if (!timeToGo)
         return false;
 
@@ -121,10 +120,6 @@ bool IMU::readMPU9250()
     this->yaw -= 8.5;
     this->roll *= RAD_TO_DEG;
 
-    this->count = millis();
-    this->sumCount = 0;
-    this->sum = 0;
-
     this->angles.A = this->pitch;
     this->angles.B = this->roll;
     this->angles.C = this->yaw;
@@ -150,4 +145,11 @@ void IMU::resetMinMax()
 {
     this->min = {1e6, 2e6, 3e6};
     this->max = {-1e6, -2e6, -3e6};
+}
+
+void IMU::resetRateCounter()
+{
+    this->count = millis();
+    this->sumCount = 0;
+    this->sum = 0;
 }

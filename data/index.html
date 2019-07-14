@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>MPU9250</title>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <style>
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script> -->
+    <script src="three.min.js"></script>
+    <script>
+        "use strict"
+        var scene;
+        var camera;
+        var renderer;
+        var cube;
+
+        function render() {
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+
+        function CubeBegin() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(
+                75,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            renderer = new THREE.WebGLRenderer();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            var geometry = new THREE.BoxGeometry(100, 50, 10);
+            var cubeMaterials = [
+                new THREE.MeshBasicMaterial({ color: 0xfe4365 }),
+                new THREE.MeshBasicMaterial({ color: 0xfc9d9a }),
+                new THREE.MeshBasicMaterial({ color: 0xf9cdad }),
+                new THREE.MeshBasicMaterial({ color: 0xc8cba9 }),
+                new THREE.MeshBasicMaterial({ color: 0x83af98 }),
+                new THREE.MeshBasicMaterial({ color: 0xe5fcc2 })
+            ];
+
+            var material = new THREE.MeshFaceMaterial(cubeMaterials);
+            cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            camera.position.z = 200;
+
+            render();
+        }
+
+        function WebSocketBegin() {
+            CubeBegin();
+
+            if ("WebSocket" in window) {
+                var ws;
+                try {
+                    var ip = location.hostname;
+                    // var ip = "192.168.2.16";
+                    ws = new WebSocket("ws://" + ip + "/ws", ["arduino"]);
+                } catch (exception) {
+                    console.error(exception);
+                }
+
+                ws.onopen = function () {
+                    // Web Socket is connected
+                };
+
+                ws.onmessage = function (evt) {
+                    console.log("RECEIVED FROM ESP :\n", evt.data);
+                    var jsonObject = JSON.parse(evt.data);
+                    if (!jsonObject.hasOwnProperty("quaternions")) {
+                        return;
+                    }
+                    var q0 = jsonObject.quaternions.q0;
+                    var q1 = jsonObject.quaternions.q1;
+                    var q2 = jsonObject.quaternions.q2;
+                    var q3 = jsonObject.quaternions.q3;
+                    // console.log("q0 " + q0);
+                    // console.log("q1 " + q1);
+                    // console.log("q2 " + q2);
+                    // console.log("q3 " + q3);
+                    var quat1 = new THREE.Quaternion(q1, q2, q3, q0);
+                    var quat2 = new THREE.Quaternion(1, 0, 0, 0);
+
+                    cube.quaternion.multiplyQuaternions(quat1, quat2);
+                };
+
+                ws.onclose = function () {
+                    // websocket is closed.
+                    alert("Connection is closed...");
+                };
+            } else {
+                // The browser doesn't support WebSocket
+                alert("WebSocket NOT supported by your Browser!");
+            }
+        }
+    </script>
+</head>
+
+<body onload="javascript:WebSocketBegin()">
+</body>
+
+</html>
