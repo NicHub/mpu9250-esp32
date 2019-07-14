@@ -37,7 +37,8 @@
 
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
-            var geometry = new THREE.BoxGeometry(100, 50, 10);
+
+            var geometry = new THREE.BoxGeometry(100, 50, 20);
             var cubeMaterials = [
                 new THREE.MeshBasicMaterial({ color: 0xfe4365 }),
                 new THREE.MeshBasicMaterial({ color: 0xfc9d9a }),
@@ -46,9 +47,7 @@
                 new THREE.MeshBasicMaterial({ color: 0x83af98 }),
                 new THREE.MeshBasicMaterial({ color: 0xe5fcc2 })
             ];
-
-            var material = new THREE.MeshFaceMaterial(cubeMaterials);
-            cube = new THREE.Mesh(geometry, material);
+            cube = new THREE.Mesh(geometry, cubeMaterials);
             scene.add(cube);
 
             camera.position.z = 200;
@@ -62,8 +61,8 @@
             if ("WebSocket" in window) {
                 var ws;
                 try {
-                    var ip = location.hostname;
-                    // var ip = "192.168.2.16";
+                    // var ip = location.hostname;
+                    var ip = "192.168.2.16";
                     ws = new WebSocket("ws://" + ip + "/ws", ["arduino"]);
                 } catch (exception) {
                     console.error(exception);
