@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>MPU9250</title>
+    <link rel="shortcut icon" href="favicon.ico" />
+    <style>
+        html,
+        body {
+            height: 100%;
+            font-family: monospace;
+            background-color: black;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        p {
+            background-color: inherit;
+            border: 0px solid;
+        }
+
+        #scene3dcontainer {
+            width: 100%;
+            height: 90%;
+        }
+
+        #infoPanel {
+            background-color: black;
+            color: chartreuse;
+            height: 10%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            border: 0px solid blue;
+            padding: 5px;
+            margin: 0;
+        }
+
+        @media (max-width: 980px) {
+            #scene3dcontainer {
+                height: 70%;
+            }
+
+            #infoPanel {
+                font-size: 3vh;
+                height: 30%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id="scene3dcontainer"></div>
+
+    <div id="infoPanel"></div>
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script> -->
+    <script src="three.min.js"></script>
+    <script src="mpu9250-threejs.js"></script>
+
+</body>
+
+</html>
