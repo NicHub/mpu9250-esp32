@@ -9,13 +9,19 @@
         html,
         body {
             height: 100%;
-            font-family: monospace;
         }
 
         body {
+            font-family: monospace;
+            background-color: white;
+            color: white;
             margin: 0;
             padding: 0;
             display: block;
+        }
+
+        a {
+            color: black;
         }
 
         .container {
@@ -31,13 +37,42 @@
             height: 100%;
         }
 
+        img.logo {
+            height: 30px;
+        }
+
+        header {
+            display: table;
+            margin: 0 auto;
+            width: 33.3%;
+        }
+
+        header div {
+            padding: 5px;
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
     </style>
 </head>
 
 <body>
 
     <div class="container">
-        <h1>MPU9250</h1>
+        <a href="/">
+            <header>
+                <div>
+                    <img class="logo" src="logo.png" alt="logo" />
+                </div>
+                <div>
+                    <h1>MPU9250</h1>
+                </div>
+                <div>
+                    <img class="logo" src="logo.png" alt="logo" />
+                </div>
+            </header>
+        </a>
         <div id="divgraph1" class="divgraph"></div>
     </div>
 

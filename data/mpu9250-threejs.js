@@ -2,7 +2,7 @@
 var scene;
 var camera;
 var renderer;
-var cube;
+var axis3d;
 var scene3dcontainer = document.getElementById("scene3dcontainer");
 var infoPanel = document.getElementById("infoPanel");
 
@@ -26,18 +26,30 @@ function CubeBegin() {
 
     scene = new THREE.Scene();
 
-    camera = new THREE.PerspectiveCamera(
-        650,
-        scene3dcontainer.clientWidth / scene3dcontainer.clientHeight,
-        0.1,
-        1000
-    );
+    if (false) {
+        camera = new THREE.PerspectiveCamera(
+            650,
+            scene3dcontainer.clientWidth / scene3dcontainer.clientHeight,
+            0.1,
+            1000
+        );
+    } else {
+        camera = new THREE.OrthographicCamera(
+            scene3dcontainer.clientWidth / - 7,
+            scene3dcontainer.clientWidth / 7,
+            scene3dcontainer.clientHeight / 7,
+            scene3dcontainer.clientHeight / - 7,
+            1,
+            1000);
+    }
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(scene3dcontainer.clientWidth, scene3dcontainer.clientHeight);
     scene3dcontainer.appendChild(renderer.domElement);
 
-    var geometry = new THREE.BoxGeometry(100, 50, 20);
+    var drawWireframe = false;
+
+    var cube_Geometry = new THREE.BoxGeometry(30, 30, 30);
     var cubeMaterials = [
         new THREE.MeshBasicMaterial({ color: 0xfe4365 }),
         new THREE.MeshBasicMaterial({ color: 0xfc9d9a }),
@@ -46,8 +58,53 @@ function CubeBegin() {
         new THREE.MeshBasicMaterial({ color: 0x83af98 }),
         new THREE.MeshBasicMaterial({ color: 0xe5fcc2 })
     ];
-    cube = new THREE.Mesh(geometry, cubeMaterials);
-    scene.add(cube);
+    var cube_Mesh = new THREE.Mesh(cube_Geometry, cubeMaterials);
+
+    var arrow_A_Geometry = new THREE.ConeGeometry(15, 30, 32);
+    var arrow_A_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("#FF0018"), wireframe: drawWireframe });
+    var arrow_A_Mesh = new THREE.Mesh(arrow_A_Geometry, arrow_A_Material);
+    arrow_A_Mesh.rotation.z = Math.PI / 180 * 270;
+    arrow_A_Mesh.position.x = 75;
+
+    var cyl_A_Geometry = new THREE.CylinderGeometry(5, 5, 60, 32);
+    var cyl_A_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("hsl(0, 0%, 90%)"), wireframe: drawWireframe });
+    var cyl_A_Mesh = new THREE.Mesh(cyl_A_Geometry, cyl_A_Material);
+    cyl_A_Mesh.rotation.z = Math.PI / 180 * 270;
+    cyl_A_Mesh.position.x = 30;
+
+    var arrow_B_Geometry = new THREE.ConeGeometry(15, 30, 32);
+    var arrow_B_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("#18FF00"), wireframe: drawWireframe });
+    var arrow_B_Mesh = new THREE.Mesh(arrow_B_Geometry, arrow_B_Material);
+    arrow_B_Mesh.rotation.z = Math.PI / 180 * 0;
+    arrow_B_Mesh.position.y = 75;
+
+    var cyl_B_Geometry = new THREE.CylinderGeometry(5, 5, 60, 32);
+    var cyl_B_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("hsl(0, 0%, 90%)"), wireframe: drawWireframe });
+    var cyl_B_Mesh = new THREE.Mesh(cyl_B_Geometry, cyl_B_Material);
+    cyl_B_Mesh.rotation.z = Math.PI / 180 * 0;
+    cyl_B_Mesh.position.y = 30;
+
+    var arrow_C_Geometry = new THREE.ConeGeometry(15, 30, 32);
+    var arrow_C_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("#008BFF"), wireframe: drawWireframe });
+    var arrow_C_Mesh = new THREE.Mesh(arrow_C_Geometry, arrow_C_Material);
+    arrow_C_Mesh.rotation.x = Math.PI / 180 * 90;
+    arrow_C_Mesh.position.z = 75;
+
+    var cyl_C_Geometry = new THREE.CylinderGeometry(5, 5, 60, 32);
+    var cyl_C_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("hsl(0, 0%, 90%)"), wireframe: drawWireframe });
+    var cyl_C_Mesh = new THREE.Mesh(cyl_C_Geometry, cyl_C_Material);
+    cyl_C_Mesh.rotation.x = Math.PI / 180 * 90;
+    cyl_C_Mesh.position.z = 30;
+
+    axis3d = new THREE.Group();
+    axis3d.add(cube_Mesh);
+    axis3d.add(arrow_A_Mesh);
+    axis3d.add(cyl_A_Mesh);
+    axis3d.add(arrow_B_Mesh);
+    axis3d.add(cyl_B_Mesh);
+    axis3d.add(arrow_C_Mesh);
+    axis3d.add(cyl_C_Mesh);
+    scene.add(axis3d);
     camera.position.z = 200;
     render();
 }
@@ -97,8 +154,6 @@ function webSocketHandle(ip) {
         var refreshRate = 1000 / deltaTms;
         T1 = T2;
 
-        infoPanel.innerHTML = "<p>" + evt.data + "</p><p>Refresh rate = " + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms)</p>";
-
         var data = JSON.parse(evt.data);
         if (!data.hasOwnProperty("quaternions") || !data.hasOwnProperty("angles")) {
             return;
@@ -110,7 +165,8 @@ function webSocketHandle(ip) {
         var quat1 = new THREE.Quaternion(q1, q2, q3, q0);
         var quat2 = new THREE.Quaternion(1, 0, 0, 0);
 
-        cube.quaternion.multiplyQuaternions(quat1, quat2);
+        axis3d.quaternion.multiplyQuaternions(quat1, quat2);
+        infoPanel.innerHTML = "<p>" + evt.data + "</p><p>Refresh rate = " + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms)</p>";
     };
 
     ws.onclose = function () {

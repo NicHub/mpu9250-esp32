@@ -56,19 +56,19 @@
         Plotly.plot('divgraph1', [{
             y: [],
             mode: 'lines+markers',
-            marker: { color: 'lime', size: 8 },
+            marker: { color: '#FF0018', size: 8 },
             name: 'Angle A',
             line: { width: 4 }
         }, {
             y: [],
             mode: 'lines+markers',
-            marker: { color: 'blue', size: 8 },
+            marker: { color: '#18FF00', size: 8 },
             name: 'Angle B',
             line: { width: 4 }
         }, {
             y: [],
             mode: 'lines+markers',
-            marker: { color: 'red', size: 8 },
+            marker: { color: '#008BFF', size: 8 },
             name: 'Angle C',
             line: { width: 4 }
         }

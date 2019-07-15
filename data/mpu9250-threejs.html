@@ -16,6 +16,19 @@
         body {
             margin: 0;
             padding: 0;
+            color: white;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .container {
+            margin: 0 auto;
+            display: block;
+            width: 90%;
+            text-align: center;
+            height: 90%;
         }
 
         p {
@@ -25,11 +38,11 @@
 
         #scene3dcontainer {
             width: 100%;
-            height: 90%;
         }
 
-        #infoPanel {
-            background-color: black;
+        .infoPanel {
+            display: block;
+            background-color: inherit;
             color: chartreuse;
             height: 10%;
             word-wrap: break-word;
@@ -39,14 +52,80 @@
             margin: 0;
         }
 
+        .axisColor {
+            margin: 0 50px;
+            padding: 5px 20px;
+            font-size: 20pt;
+            border-radius: 10px;
+        }
+
+        .axisX {
+            color: black;
+            background-color: #FF0018;
+            border: 1px solid #FF0018;
+        }
+
+        .axisY {
+            color: black;
+            background-color: #18FF00;
+            border: 1px solid #18FF00;
+        }
+
+        .axisZ {
+            color: black;
+            background-color: #008BFF;
+            border: 1px solid #008BFF;
+        }
+
+        #colorPanel {
+            text-align: center;
+            height: 5%;
+        }
+
+        #scene3dcontainer {
+            height: 85%;
+            border: 1px solid grey;
+        }
+
+        .infoPanel {
+            font-size: 15pt;
+            text-align: left;
+        }
+
+        #infoPanel {
+            height: 10%;
+        }
+
+        img.logo {
+            height: 30px;
+        }
+
+        header {
+            display: table;
+            margin: 0 auto;
+            width: 33.3%;
+        }
+
+        header div {
+            padding: 5px;
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
         @media (max-width: 980px) {
+            #colorPanel {
+                font-size: 3vh;
+                height: 10%;
+            }
+
             #scene3dcontainer {
-                height: 70%;
+                height: 60%;
             }
 
             #infoPanel {
                 font-size: 3vh;
-                height: 30%;
+                height: 20%;
             }
         }
 
@@ -54,10 +133,30 @@
 </head>
 
 <body>
-
-    <div id="scene3dcontainer"></div>
-
-    <div id="infoPanel"></div>
+    <div class="container">
+        <a href="/">
+            <header>
+                <div>
+                    <img class="logo" src="logo-white.png" alt="logo" />
+                </div>
+                <div>
+                    <h1>MPU9250</h1>
+                </div>
+                <div>
+                    <img class="logo" src="logo-white.png" alt="logo" />
+                </div>
+            </header>
+        </a>
+        <div id="scene3dcontainer"></div>
+        <div class="infoPanel" id="colorPanel">
+            <p>
+                <span class="axisColor axisX">AXIS X</span>
+                <span class="axisColor axisY">AXIS Y</span>
+                <span class="axisColor axisZ">AXIS Z</span>
+            </p>
+        </div>
+        <div class="infoPanel" id="infoPanel"></div>
+    </div>
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/101/three.min.js"></script> -->
     <script src="three.min.js"></script>
