@@ -29,6 +29,10 @@ IMU IMU1;
 LCDscreen LCD1;
 UART UART1;
 
+AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
+AsyncWebServer server(80);
+AsyncEventSource events("/events");
+
 /**
  * printCompilationDateAndTime
  */
