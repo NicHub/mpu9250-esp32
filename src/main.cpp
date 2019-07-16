@@ -1,69 +1,138 @@
-/**
- * GY-91-test-M5Stack
- */
+/************************************************************
+MPU9250_DMP_Quaternion
+ Quaternion example for MPU-9250 DMP Arduino Library
+Jim Lindblom @ SparkFun Electronics
+original creation date: November 23, 2016
+https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
 
+The MPU-9250's digital motion processor (DMP) can calculate
+four unit quaternions, which can be used to represent the
+rotation of an object.
+
+This exmaple demonstrates how to configure the DMP to
+calculate quaternions, and prints them out to the serial
+monitor. It also calculates pitch, roll, and yaw from those
+values.
+
+Development environment specifics:
+Arduino IDE 1.6.12
+SparkFun 9DoF Razor IMU M0
+
+Supported Platforms:
+- ATSAMD21 (Arduino Zero, SparkFun SAMD21 Breakouts)
+*************************************************************/
 #include <Arduino.h>
-
-/* MPU9250 Basic Example Code
- by: Kris Winer
- date: April 1, 2014
- license: Beerware - Use this code however you'd like. If you
- find it useful you can buy me a beer some time.
- Modified by Brent Wilkins July 19, 2016
-
- Demonstrate basic MPU-9250 functionality including parameterizing the register
- addresses, initializing the sensor, getting properly scaled accelerometer,
- gyroscope, and magnetometer data out. Added display functions to allow display
- to on breadboard monitor. Addition of 9 DoF sensor fusion using open source
- Madgwick and Mahony filter algorithms. Sketch runs on the 3.3 V 8 MHz Pro Mini
- and the Teensy 3.1.
- */
+#include <M5Stack.h>
+#include <SparkFunMPU9250-DMP.h>
 
 #include <WebServerApp.h>
 #include <M5Stack.h>
-#include <imu.h>
-#include <uart.h>
-#include <lcd.h>
-
-IMU IMU1;
-LCDscreen LCD1;
-UART UART1;
 
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
 
-/**
- * printCompilationDateAndTime
- */
-void printCompilationDateAndTime()
-{
-    Serial.print("###\ncompilation date and time:\n");
-    Serial.print(__DATE__);
-    Serial.print("\n");
-    Serial.print(__TIME__);
-    Serial.print("\n###\n\n");
-}
+#define SerialPort Serial
 
+MPU9250_DMP imu;
 /**
- * sendJSON
+ *
  */
-void sendJSON_IMU()
+void printIMUData(void)
 {
+    // After calling dmpUpdateFifo() the ax, gx, mx, etc. values
+    // are all updated.
+    // Quaternion values are, by default, stored in Q30 long
+    // format. calcQuat turns them into a float between -1 and 1
+    float q0 = imu.calcQuat(imu.qw);
+    float q1 = imu.calcQuat(imu.qx);
+    float q2 = imu.calcQuat(imu.qy);
+    float q3 = imu.calcQuat(imu.qz);
+
+    SerialPort.println("Q: " + String(q0, 4) + ", " +
+                       String(q1, 4) + ", " + String(q2, 4) +
+                       ", " + String(q3, 4));
+    SerialPort.println("R/P/Y: " + String(imu.roll) + ", " + String(imu.pitch) + ", " + String(imu.yaw));
+    SerialPort.println("Time: " + String(imu.time) + " ms");
+    SerialPort.println();
+
+    // Send JSON
     if (!ws.enabled())
         return;
+    float eulerA = imu.roll;
+    float eulerB = imu.pitch;
+    float eulerC = imu.yaw;
     static char jsonMsg[200];
-    abc_t angles = IMU1.angles;
     const char *formatString =
         R"rawText({"quaternions":{"q0":"%f","q1":"%f","q2":"%f","q3":"%f"},
  "angles":{"A":"%f","B":"%f","C":"%f"}})rawText";
-
     sprintf(jsonMsg,
             formatString,
-            *(getQ() + 0), *(getQ() + 1), *(getQ() + 2), *(getQ() + 3),
-            angles.A, angles.B, angles.C);
-
+            q0, q1, q2, q3,
+            eulerA, eulerB, eulerC);
     ws.textAll(jsonMsg);
+}
+
+/**
+ *
+ */
+void setupSerial()
+{
+    Serial.begin(BAUD_RATE);
+    Serial.print("\n\n##########################");
+    Serial.print("\nCOMPILATION DATE AND TIME:\n");
+    Serial.print(__DATE__);
+    Serial.print("\n");
+    Serial.print(__TIME__);
+    Serial.print("\n##########################\n\n");
+}
+
+/**
+ *
+ */
+void setupIMU()
+{
+    // Call imu.begin() to verify communication and initialize
+    if (imu.begin() != INV_SUCCESS)
+    {
+        SerialPort.println("Unable to communicate with MPU-9250");
+        SerialPort.println("Check connections, and try again.");
+        SerialPort.println();
+        while (1)
+        {
+            yield();
+        }
+    }
+
+    imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
+                     DMP_FEATURE_GYRO_CAL, // Use gyro calibration
+                 10);                      // Set DMP FIFO rate to 10 Hz
+                                           // DMP_FEATURE_LP_QUAT can also be used. It uses the
+                                           // accelerometer in low-power mode to estimate quat's.
+                                           // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
+}
+
+/**
+ *
+ */
+unsigned short readIMU()
+{
+    unsigned short fifoAvailable = imu.fifoAvailable();
+
+    // Check for new data in the FIFO
+    if (fifoAvailable)
+    {
+        // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
+        if (imu.dmpUpdateFifo() == INV_SUCCESS)
+        {
+            // computeEulerAngles can be used -- after updating the
+            // quaternion values -- to estimate roll, pitch, and yaw
+            imu.computeEulerAngles();
+            printIMUData();
+        }
+    }
+
+    return fifoAvailable;
 }
 
 /**
@@ -71,31 +140,13 @@ void sendJSON_IMU()
  */
 void setup()
 {
+#if LCD == true
     M5.begin(LCD, false, true, true);
-
-    Wire.begin();
-
+#endif
+    setupSerial();
     scanNetwork();
     setupWebServer();
-    printCompilationDateAndTime();
-
-#if LCD == true
-    LCD1.setup1();
-#endif
-
-    UART1.begin();
-
-    // Calibrate gyro and accelerometers, load biases in bias registers
-    IMU1.calibrateMPU9250(IMU1.gyroBias, IMU1.accelBias);
-
-    IMU1.initMPU9250();
-
-    UART1.printWhoAmI();
-
-    // Get magnetometer calibration from AK8963 ROM
-    IMU1.initAK8963(IMU1.magCalibration);
-
-    UART1.printMagCalibration();
+    setupIMU();
 }
 
 /**
@@ -104,35 +155,6 @@ void setup()
 void loop()
 {
     ArduinoOTA.handle();
-
-    bool timeToGo = IMU1.readMPU9250();
-    if (!timeToGo)
-        return;
-
-#if false
-    IMU1.getMaxAngle();
-    IMU1.getMinAngle();
-#endif
-
-#if SERIAL_DEBUG == true
-    UART1.printSerialDebug();
-    UART1.printMinMax();
-#endif
-
-#if LCD == true
-    M5.update();
-    // LCD1.printLCD(); // Print values as numbers.
-    LCD1.drawBars(); // Print values as bars.
-
-    if (M5.BtnA.wasReleased())
-    {
-        IMU1.resetMinMax();
-        Serial.println("## RESET ##");
-        UART1.printMinMax();
-        delay(1000);
-    }
-#endif
-
-    sendJSON_IMU();
-    IMU1.resetRateCounter();
+    readIMU();
+    delay(1);
 }

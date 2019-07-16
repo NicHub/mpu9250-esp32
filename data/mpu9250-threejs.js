@@ -61,7 +61,7 @@ function CubeBegin() {
     var cube_Mesh = new THREE.Mesh(cube_Geometry, cubeMaterials);
 
     var arrow_A_Geometry = new THREE.ConeGeometry(15, 30, 32);
-    var arrow_A_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("#FF0018"), wireframe: drawWireframe });
+    var arrow_A_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("orangered"), wireframe: drawWireframe });
     var arrow_A_Mesh = new THREE.Mesh(arrow_A_Geometry, arrow_A_Material);
     arrow_A_Mesh.rotation.z = Math.PI / 180 * 270;
     arrow_A_Mesh.position.x = 75;
@@ -73,7 +73,7 @@ function CubeBegin() {
     cyl_A_Mesh.position.x = 30;
 
     var arrow_B_Geometry = new THREE.ConeGeometry(15, 30, 32);
-    var arrow_B_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("#18FF00"), wireframe: drawWireframe });
+    var arrow_B_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("mediumseagreen"), wireframe: drawWireframe });
     var arrow_B_Mesh = new THREE.Mesh(arrow_B_Geometry, arrow_B_Material);
     arrow_B_Mesh.rotation.z = Math.PI / 180 * 0;
     arrow_B_Mesh.position.y = 75;
@@ -85,7 +85,7 @@ function CubeBegin() {
     cyl_B_Mesh.position.y = 30;
 
     var arrow_C_Geometry = new THREE.ConeGeometry(15, 30, 32);
-    var arrow_C_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("#008BFF"), wireframe: drawWireframe });
+    var arrow_C_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("dodgerblue"), wireframe: drawWireframe });
     var arrow_C_Mesh = new THREE.Mesh(arrow_C_Geometry, arrow_C_Material);
     arrow_C_Mesh.rotation.x = Math.PI / 180 * 90;
     arrow_C_Mesh.position.z = 75;
@@ -166,10 +166,10 @@ function webSocketHandle(ip) {
         var quat2 = new THREE.Quaternion(1, 0, 0, 0);
 
         axis3d.quaternion.multiplyQuaternions(quat1, quat2);
-        infoPanel.innerHTML = "<p>" + evt.data + "</p><p>Refresh rate = " + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms)</p>";
+        infoPanel.innerHTML = "<pre>" + evt.data + "</pre><pre>Refresh rate = " + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms)</pre>";
     };
 
     ws.onclose = function () {
-        infoPanel.innerHTML = "<p>WebSocket connection is closed</p>";
+        infoPanel.innerHTML = "<pre>WebSocket connection is closed</pre>";
     };
 }

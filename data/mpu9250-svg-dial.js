@@ -44,44 +44,28 @@
 
         var ws = new WebSocket("ws://" + ip + "/ws", ["arduino"]);
 
-        var layout = {
-            yaxis: {
-                range: [-20, 380],
-                tickmode: "linear",
-                tick0: 0,
-                dtick: 20
-            }
-        }
+        var dialA = document.getElementById("dialA");
+        var dialB = document.getElementById("dialB");
+        var dialC = document.getElementById("dialC");
+        var dialAangle = document.getElementById("dialAangle");
+        var dialBangle = document.getElementById("dialBangle");
+        var dialCangle = document.getElementById("dialCangle");
 
-        Plotly.plot('divgraph1', [{
-            y: [],
-            mode: 'lines+markers',
-            marker: { color: 'orangered', size: 8 },
-            name: 'Angle A',
-            line: { width: 4 }
-        }, {
-            y: [],
-            mode: 'lines+markers',
-            marker: { color: 'mediumseagreen', size: 8 },
-            name: 'Angle B',
-            line: { width: 4 }
-        }, {
-            y: [],
-            mode: 'lines+markers',
-            marker: { color: 'dodgerblue', size: 8 },
-            name: 'Angle C',
-            line: { width: 4 }
-        }
-        ], layout);
+        var transfA = "rotate(";
+        var transfB = "rotate(";
+        var transfC = "rotate(";
 
         ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
             if (!data.hasOwnProperty("quaternions") || !data.hasOwnProperty("angles")) {
                 return;
             }
-            Plotly.extendTraces('divgraph1', {
-                y: [[data.angles.A], [data.angles.B], [data.angles.C]]
-            }, [0, 1, 2], 10)
+            dialA.setAttribute("transform", transfA + data.angles.A + ")");
+            dialB.setAttribute("transform", transfB + data.angles.B + ")");
+            dialC.setAttribute("transform", transfC + data.angles.C + ")");
+            dialAangle.textContent = Number(data.angles.A).toFixed(2) + "°";
+            dialBangle.textContent = Number(data.angles.B).toFixed(2) + "°";
+            dialCangle.textContent = Number(data.angles.C).toFixed(2) + "°";
         };
     }
 }
