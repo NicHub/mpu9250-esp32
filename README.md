@@ -18,7 +18,10 @@ The web files must be uploaded on the ESP32 with the following command:
     platformio run --target uploadfs
 
 <p align="center">
-<img height=400px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32.jpg" />
+<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-index.jpg" />
+<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-svg-dials.jpg" />
+<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-threejs.jpg" />
+<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-plotly.jpg" />
 </p>
 
 
