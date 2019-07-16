@@ -24,7 +24,7 @@ The web files must be uploaded on the ESP32 with the following command:
 
 ## Library used
 
-I used the following library <https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library>. Unfortunately, it cannot be used directly because the definition of `min()` and `max()` functions are missing so I put a copy in the `lib` directory and I added the missing definition at line 97 in `inv_mpu.c`:
+I used the following library <https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library>. Unfortunately, it cannot be used directly because the definition of `min()` and `max()` functions are missing so I put a copy of this library in the `lib` directory and I added the missing definition at line 97 in `inv_mpu.c`:
 
     #ifndef min
     #define min(X,Y) (((X) < (Y)) ? (X) : (Y))
@@ -38,13 +38,6 @@ I used the following library <https://github.com/sparkfun/SparkFun_MPU-9250-DMP_
 
 ## Credits
 
-The MPU9250 driver comes from the M5Stack project:
-
-<https://github.com/m5stack/M5Stack/blob/master/src/utility/MPU9250.cpp>
-
 The *threejs* stuff comes from this project:
 
 <https://github.com/DominikN/ESP32-MPU9250-web-view>
-
-
-
