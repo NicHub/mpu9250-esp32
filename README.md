@@ -19,7 +19,7 @@ const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
 const char *ap_password = ""; // let blank
 ```
 
-3. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a M5Stack, you can set it to `m5stack-core-esp32`. In case of problem, you’ll have to add your particular board model.
+3. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a *M5Stack*, you can set it to `m5stack-core-esp32`. In case of problem, you’ll have to add your particular board model.
 
 4. Upload the web files on the ESP32 with the following command:
 
@@ -48,9 +48,9 @@ The system lags sometimes a little bit. This is probably due to WiFi performance
 
 The calculation of Euler angles has a Gimbal lock problem. If you want to see it:
 
-- Open the *threejs* and the *dials" pages side by side.
+- Open the *threejs* and the *dials* pages side by side.
 - Find the orientation of the MPU9250 that makes all 3 dials vertical (at 12 o’clock).
-- Rotate the MPU only around X and then only around Z and check the output in both *threejs* and *dials" windows. They should show consistent results.
+- Rotate the MPU only around X and then only around Z and check the output in both *threejs* and *dials* windows. They should show consistent results.
 - Rotate the MPU around Y only and you’ll see that the results are OK in *threejs* but not in *dials*. This is because *threejs* uses quaternions and *dials* uses Euler angles.
 
 
