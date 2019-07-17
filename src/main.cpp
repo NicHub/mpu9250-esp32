@@ -30,6 +30,8 @@ AsyncEventSource events("/events");
 
 IMU imu1;
 
+const unsigned short fifoRate = 20U; // IMU refresh rate in Hz.
+
 /**
  *
  */
@@ -41,7 +43,7 @@ void setup()
     setupSerial();
     scanNetwork();
     setupWebServer();
-    imu1.setupIMU();
+    imu1.setupIMU(fifoRate);
 }
 
 /**
@@ -49,24 +51,33 @@ void setup()
  */
 void loop()
 {
-    delay(10);
+    static unsigned long T1 = millis();
+    if ((millis() - T1) < (1000 / fifoRate))
+        return;
+    T1 = millis();
 
     ArduinoOTA.handle();
 
     if (!ws.enabled())
+    {
+        Serial.println("NO WebSocket!");
         return;
+    }
 
     // Read IMU.
-    if (!imu1.readIMU())
-        return;
-
-    // Format IMU values to JSON.
+    static unsigned short status;
     static char jsonMsg[200];
-    imu1.toJSON(jsonMsg);
-
-    // Send JSON through WebSocket.
+    status = imu1.readIMU(jsonMsg);
     ws.textAll(jsonMsg);
+    if (status != 0)
+        Serial.println(jsonMsg);
 
-    // Send JSON to serial.
-    Serial.println(jsonMsg);
+    // For debug of lag.
+    static uint8_t cpt = 0;
+    if ((++cpt % 20) == 0)
+    {
+        cpt = 0;
+        Serial.print("\n");
+    }
+    Serial.print(".");
 }

@@ -5,17 +5,31 @@ Measure the orientation of a MPU9250 IMU and display the results on a web page s
 
 The project must be compiled with *PlarformIO Core 4.0*.
 
-You have to create manually a file called `src/WifiSettings.h` with the following content:
+## INSTRUCTIONS
+
+1. Connect the MPU9250 to the I²C port of the ESP32.
+
+2. Create manually a file called `src/WifiSettings.h` with the following content:
 
     #pragma once
-    const char *ssid        = "...";
-    const char *password    = "...";
-    const char *ap_ssid     = "ESP32-IMU-";
-    const char *ap_password = "";
+    const char *ssid        = "..."; // SSID of your WiFi router.
+    const char *password    = "..."; // Pasword  of your WiFi router.
+    const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
+    const char *ap_password = ""; // let blank
 
-The web files must be uploaded on the ESP32 with the following command:
+3. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a M5Stack, you can set it to `m5stack-core-esp32`. In case of problem, you’ll have to add your particular board model.
+
+4. Upload the web files on the ESP32 with the following command:
 
     platformio run --target uploadfs
+
+5. Upload the code to the ESP32 with PlatformIO.
+
+6. Check the IP adresses in the serial output. You may need to reboot your ESP to see them.
+    - Use `STATION IP address` to connect to your ESP32 via your WiFi router.
+    - Use `SOFT-AP IP address` to connect your computer directly to your ESP32.
+
+7. Navigate to the IP address of the ESP32 in your web browser. You should see the pages below. You can open all of them in separate windows at the same time.
 
 <p align="center">
 <img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-index.jpg" />
@@ -23,6 +37,17 @@ The web files must be uploaded on the ESP32 with the following command:
 <img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-threejs.jpg" />
 <img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-plotly.jpg" />
 </p>
+
+## LIMITATIONS
+
+The system lags sometimes a little bit. This is probably due to WiFi performances.
+
+The calculation of Euler angles has a Gimbal lock problem. If you want to see it:
+
+- Open the *threejs* and the *dials" pages side by side.
+- Find the orientation of the MPU9250 that makes all 3 dials vertical (at 12 o’clock).
+- Rotate the MPU only around X and then only around Z and check the output in both *threejs* and *dials" windows. They should show consistent results.
+- Rotate the MPU around Y only and you’ll see that the results are OK in *threejs* but not in *dials*. This is because *threejs* uses quaternions and *dials* uses Euler angles.
 
 
 ## LIBRARY USED

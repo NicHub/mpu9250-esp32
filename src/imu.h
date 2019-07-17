@@ -33,11 +33,13 @@ typedef struct
 
 class IMU : public MPU9250_DMP
 {
+private:
+    void toJSON(char *jsonMsg);
+
 public:
     MPU9250_DMP imu;
     euler_angles_t quatToEulerWikipedia(quaternion_t q);
     euler_angles_t quatToEulerEuclideanspace(quaternion_t q1);
-    void toJSON(char *jsonMsg);
-    void setupIMU(unsigned short fifoRate = 10);
-    unsigned short readIMU();
+    void setupIMU(unsigned short fifoRate = 10U);
+    int8_t readIMU(char *jsonMsg);
 };

@@ -138,7 +138,7 @@ void IMU::setupIMU(unsigned short fifoRate)
 
     imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
                      DMP_FEATURE_GYRO_CAL, // Use gyro calibration
-                 fifoRate);                      // Set DMP FIFO rate to 10 Hz
+                 fifoRate);                // Set DMP FIFO rate to 10 Hz
                                            // DMP_FEATURE_LP_QUAT can also be used. It uses the
                                            // accelerometer in low-power mode to estimate quat's.
                                            // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
@@ -147,21 +147,30 @@ void IMU::setupIMU(unsigned short fifoRate)
 /**
  *
  */
-unsigned short IMU::readIMU()
+int8_t IMU::readIMU(char *jsonMsg)
 {
     unsigned short fifoAvailable = imu.fifoAvailable();
 
     // Check for new data in the FIFO
-    if (fifoAvailable)
+    if (!fifoAvailable)
     {
-        // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
-        if (imu.dmpUpdateFifo() == INV_SUCCESS)
-        {
-            // computeEulerAngles can be used -- after updating the
-            // quaternion values -- to estimate roll, pitch, and yaw
-            imu.computeEulerAngles();
-        }
+        sprintf(jsonMsg, R"rawText({"msg":"NO IMU DATA AVAILABLE","Tms":%lu})rawText",
+                millis());
+        return 1;
     }
 
-    return fifoAvailable;
+    // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
+    if (imu.dmpUpdateFifo() != INV_SUCCESS)
+    {
+        sprintf(jsonMsg, R"rawText({"msg":"FIFO NOT UPDATED","Tms":%lu})rawText",
+                millis());
+        return 2;
+    }
+
+    // computeEulerAngles can be used -- after updating the
+    // quaternion values -- to estimate roll, pitch, and yaw
+    imu.computeEulerAngles();
+    this->toJSON(jsonMsg);
+
+    return 0;
 }

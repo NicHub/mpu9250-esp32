@@ -147,14 +147,18 @@ function webSocketHandle(ip) {
 
     var ws = new WebSocket("ws://" + ip + "/ws", ["arduino"]);
     var T1 = +new Date();
-
+    var deltaTmax = 0;
     ws.onmessage = function (evt) {
         var T2 = +new Date();
         var deltaTms = T2 - T1;
+        deltaTmax = (deltaTms > deltaTmax) ? deltaTms: deltaTmax;
         var refreshRate = 1000 / deltaTms;
         T1 = T2;
 
         var data = JSON.parse(evt.data);
+        infoPanel.innerHTML = "<pre>" + evt.data + "</pre><pre>Refresh rate = "
+            + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms | ΔTmax = " + deltaTmax + "ms)</pre>";
+
         if (!data.hasOwnProperty("quat") || !data.hasOwnProperty("euler")) {
             return;
         }
@@ -162,7 +166,6 @@ function webSocketHandle(ip) {
         var quat2 = new THREE.Quaternion(1, 0, 0, 0);
 
         axis3d.quaternion.multiplyQuaternions(quat1, quat2);
-        infoPanel.innerHTML = "<pre>" + evt.data + "</pre><pre>Refresh rate = " + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms)</pre>";
     };
 
     ws.onclose = function () {
