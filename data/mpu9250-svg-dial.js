@@ -57,15 +57,41 @@
 
         ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
-            if (!data.hasOwnProperty("quaternions") || !data.hasOwnProperty("angles")) {
+            if (!data.hasOwnProperty("quat") || !data.hasOwnProperty("euler")) {
                 return;
             }
-            dialA.setAttribute("transform", transfA + data.angles.A + ")");
-            dialB.setAttribute("transform", transfB + data.angles.B + ")");
-            dialC.setAttribute("transform", transfC + data.angles.C + ")");
-            dialAangle.textContent = Number(data.angles.A).toFixed(2) + "°";
-            dialBangle.textContent = Number(data.angles.B).toFixed(2) + "°";
-            dialCangle.textContent = Number(data.angles.C).toFixed(2) + "°";
+
+            var ALGO = "from_esp";
+            if (ALGO === "threejs") {
+                var quat1 = new THREE.Quaternion(
+                    data.quat.qx, data.quat.qy,
+                    data.quat.qz, data.quat.qw);
+                // var eulerOrder = "XYZ";    // x  OK, y NOK, z  OK
+                // var eulerOrder = "ZXY";    // x NOK, y  OK, z  OK
+                // var eulerOrder = "YZX";    // x  OK, y  OK, z NOK
+                var eulerOrder = "YXZ";    // x NOK, y  OK, z  OK
+                var eViaQ1 = new THREE.Euler().setFromQuaternion(quat1, eulerOrder);
+                var mViaQ1 = new THREE.Matrix4().makeRotationFromQuaternion(quat1);
+                var eViaMViaQ1 = new THREE.Euler().setFromRotationMatrix(mViaQ1, eulerOrder);
+
+                // console.log(eViaQ1);
+                // console.log(eViaMViaQ1);
+                // console.log(eViaQ1);
+                console.log(quat1);
+                var RAD_TO_DEG = 57.295779513082320876798154814105;
+                data.euler.eA = eViaMViaQ1._x * RAD_TO_DEG;
+                data.euler.eB = eViaMViaQ1._y * RAD_TO_DEG;
+                data.euler.eC = eViaMViaQ1._z * RAD_TO_DEG;
+
+            } else if (ALGO === "from_esp") {
+            }
+
+            dialA.setAttribute("transform", transfA + data.euler.eA + ")");
+            dialB.setAttribute("transform", transfB + data.euler.eB + ")");
+            dialC.setAttribute("transform", transfC + data.euler.eC + ")");
+            dialAangle.textContent = Number(data.euler.eA).toFixed(2) + "°";
+            dialBangle.textContent = Number(data.euler.eB).toFixed(2) + "°";
+            dialCangle.textContent = Number(data.euler.eC).toFixed(2) + "°";
         };
     }
 }

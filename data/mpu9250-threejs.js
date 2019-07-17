@@ -155,14 +155,10 @@ function webSocketHandle(ip) {
         T1 = T2;
 
         var data = JSON.parse(evt.data);
-        if (!data.hasOwnProperty("quaternions") || !data.hasOwnProperty("angles")) {
+        if (!data.hasOwnProperty("quat") || !data.hasOwnProperty("euler")) {
             return;
         }
-        var q0 = data.quaternions.q0;
-        var q1 = data.quaternions.q1;
-        var q2 = data.quaternions.q2;
-        var q3 = data.quaternions.q3;
-        var quat1 = new THREE.Quaternion(q1, q2, q3, q0);
+        var quat1 = new THREE.Quaternion(data.quat.qx, data.quat.qy, data.quat.qz, data.quat.qw);
         var quat2 = new THREE.Quaternion(1, 0, 0, 0);
 
         axis3d.quaternion.multiplyQuaternions(quat1, quat2);

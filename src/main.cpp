@@ -35,6 +35,84 @@ AsyncEventSource events("/events");
 #define SerialPort Serial
 
 MPU9250_DMP imu;
+
+typedef struct
+{
+    double qw, qx, qy, qz;
+} quaternion_t;
+
+typedef struct
+{
+    double eA, eB, eC;
+} euler_angles_t;
+
+/**
+ *
+ */
+euler_angles_t quatToEulerWikipedia(quaternion_t q)
+{
+    euler_angles_t angles;
+
+    // angle A, roll (x-axis rotation)
+    double sinr_cosp = +2.0 * (q.qw * q.qx + q.qy * q.qz);
+    double cosr_cosp = +1.0 - 2.0 * (q.qx * q.qx + q.qy * q.qy);
+    angles.eA = atan2(sinr_cosp, cosr_cosp);
+
+    // angle B, pitch (y-axis rotation)
+    double sinp = +2.0 * (q.qw * q.qy - q.qz * q.qx);
+    if (fabs(sinp) >= 1)
+        angles.eB = copysign(HALF_PI, sinp); // use 90 degrees if out of range
+    else
+        angles.eB = asin(sinp);
+
+    // angle C, yaw (z-axis rotation)
+    double siny_cosp = +2.0 * (q.qw * q.qz + q.qx * q.qy);
+    double cosy_cosp = +1.0 - 2.0 * (q.qy * q.qy + q.qz * q.qz);
+    angles.eC = atan2(siny_cosp, cosy_cosp);
+
+    angles.eA *= RAD_TO_DEG;
+    angles.eB *= RAD_TO_DEG;
+    angles.eC *= RAD_TO_DEG;
+
+    return angles;
+}
+
+/**
+ * Source:
+ * http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/
+ *
+ * airplane        telescope  symbol     angular    velocity
+ * applied first   heading    azimuth    θ (theta)  yaw
+ * applied second  attitude   elevation  φ (phi)    pitch
+ * applied last    bank       tilt       ψ (psi)    roll
+ */
+euler_angles_t quatToEulerEuclideanspace(quaternion_t q1)
+{
+    euler_angles_t angles;
+    double test = q1.qx * q1.qy + q1.qz * q1.qw;
+    if (test > 0.499)
+    { // singularity at north pole
+        angles.eC = 2 * atan2(q1.qx, q1.qw);
+        angles.eB = HALF_PI;
+        angles.eA = 0;
+        return angles;
+    }
+    if (test < -0.499)
+    { // singularity at south pole
+        angles.eC = -2 * atan2(q1.qx, q1.qw);
+        angles.eB = -HALF_PI;
+        angles.eA = 0;
+        return angles;
+    }
+    double sqx = q1.qx * q1.qx;
+    double sqy = q1.qy * q1.qy;
+    double sqz = q1.qz * q1.qz;
+    angles.eC = atan2(2 * q1.qy * q1.qw - 2 * q1.qx * q1.qz, 1 - 2 * sqy - 2 * sqz);
+    angles.eB = asin(2 * test);
+    angles.eA = atan2(2 * q1.qx * q1.qw - 2 * q1.qy * q1.qz, 1 - 2 * sqx - 2 * sqz);
+    return angles;
+}
+
 /**
  *
  */
@@ -44,14 +122,15 @@ void printIMUData(void)
     // are all updated.
     // Quaternion values are, by default, stored in Q30 long
     // format. calcQuat turns them into a float between -1 and 1
-    float q0 = imu.calcQuat(imu.qw);
-    float q1 = imu.calcQuat(imu.qx);
-    float q2 = imu.calcQuat(imu.qy);
-    float q3 = imu.calcQuat(imu.qz);
+    quaternion_t quat = {
+        imu.calcQuat(imu.qw),
+        imu.calcQuat(imu.qx),
+        imu.calcQuat(imu.qy),
+        imu.calcQuat(imu.qz)};
 
-    SerialPort.println("Q: " + String(q0, 4) + ", " +
-                       String(q1, 4) + ", " + String(q2, 4) +
-                       ", " + String(q3, 4));
+    SerialPort.println("Q: " + String(quat.qw, 4) + ", " +
+                       String(quat.qx, 4) + ", " + String(quat.qy, 4) +
+                       ", " + String(quat.qz, 4));
     SerialPort.println("R/P/Y: " + String(imu.roll) + ", " + String(imu.pitch) + ", " + String(imu.yaw));
     SerialPort.println("Time: " + String(imu.time) + " ms");
     SerialPort.println();
@@ -59,17 +138,24 @@ void printIMUData(void)
     // Send JSON
     if (!ws.enabled())
         return;
-    float eulerA = imu.roll;
-    float eulerB = imu.pitch;
-    float eulerC = imu.yaw;
+
+#define ALGO EUCLIDEANSPACE
+#if ALGO == SPARKFUN
+    euler_angles_t eulerAngles = {imu.roll, imu.pitch, imu.yaw};
+#elif ALGO == WIKIPEDIA
+    euler_angles_t eulerAngles = quatToEulerWikipedia(quat);
+#elif ALGO == EUCLIDEANSPACE
+    euler_angles_t eulerAngles = quatToEulerEuclideanspace(quat);
+#endif
+
     static char jsonMsg[200];
     const char *formatString =
-        R"rawText({"quaternions":{"q0":"%f","q1":"%f","q2":"%f","q3":"%f"},
- "angles":{"A":"%f","B":"%f","C":"%f"}})rawText";
+        R"rawText({"quat":{"qw":%f,"qx":%f,"qy":%f,"qz":%f},
+ "euler":{"eA":%f,"eB":%f,"eC":%f}})rawText";
     sprintf(jsonMsg,
             formatString,
-            q0, q1, q2, q3,
-            eulerA, eulerB, eulerC);
+            quat.qw, quat.qx, quat.qy, quat.qz,
+            eulerAngles.eA, eulerAngles.eB, eulerAngles.eC);
     ws.textAll(jsonMsg);
 }
 
@@ -138,11 +224,37 @@ unsigned short readIMU()
 /**
  *
  */
+void setupM5Stack()
+{
+#ifdef _M5STACK_H_
+    M5.begin(true, false, true, true);
+
+    // Display compilation date and time on M5STACK.
+    M5.Lcd.setTextSize(3);
+    M5.Lcd.fillScreen(BLACK);
+
+    M5.Lcd.setTextColor(BLUE, BLACK);
+    M5.Lcd.setCursor(20, 10);
+    M5.Lcd.print("COMPILATION");
+
+    M5.Lcd.setCursor(20, 40);
+    M5.Lcd.print("DATE AND TIME");
+
+    M5.Lcd.setTextColor(WHITE, BLACK);
+    M5.Lcd.setCursor(20, 100);
+    M5.Lcd.print(__DATE__);
+
+    M5.Lcd.setCursor(20, 130);
+    M5.Lcd.print(__TIME__);
+#endif
+}
+
+/**
+ *
+ */
 void setup()
 {
-#if LCD == true
-    M5.begin(LCD, false, true, true);
-#endif
+    setupM5Stack();
     setupSerial();
     scanNetwork();
     setupWebServer();
@@ -156,5 +268,5 @@ void loop()
 {
     ArduinoOTA.handle();
     readIMU();
-    delay(1);
+    delay(10);
 }
