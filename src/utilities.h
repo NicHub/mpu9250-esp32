@@ -17,56 +17,48 @@
  */
 
 #include <Arduino.h>
-#include <imu.h>
-#include <WebServerApp.h>
-#include <utilities.h>
 #ifdef BOARD_M5STACK_CORE_ESP32
 #include <M5Stack.h>
 #endif
 
-AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
-AsyncWebServer server(80);
-AsyncEventSource events("/events");
-
-IMU imu1;
-
 /**
  *
  */
-void setup()
+void setupSerial()
 {
+    Serial.begin(BAUD_RATE);
+    Serial.print("\n\n##########################");
+    Serial.print("\nCOMPILATION DATE AND TIME:\n");
+    Serial.print(__DATE__);
+    Serial.print("\n");
+    Serial.print(__TIME__);
+    Serial.print("\n##########################\n\n");
+}
+
 #ifdef BOARD_M5STACK_CORE_ESP32
-    setupM5Stack();
-#endif
-    setupSerial();
-    scanNetwork();
-    setupWebServer();
-    imu1.setupIMU();
-}
-
 /**
  *
  */
-void loop()
+void setupM5Stack()
 {
-    delay(10);
+    M5.begin(true, false, true, true);
 
-    ArduinoOTA.handle();
+    // Display compilation date and time on M5STACK.
+    M5.Lcd.setTextSize(3);
+    M5.Lcd.fillScreen(BLACK);
 
-    if (!ws.enabled())
-        return;
+    M5.Lcd.setTextColor(BLUE, BLACK);
+    M5.Lcd.setCursor(20, 10);
+    M5.Lcd.print("COMPILATION");
 
-    // Read IMU.
-    if (!imu1.readIMU())
-        return;
+    M5.Lcd.setCursor(20, 40);
+    M5.Lcd.print("DATE AND TIME");
 
-    // Format IMU values to JSON.
-    static char jsonMsg[200];
-    imu1.toJSON(jsonMsg);
+    M5.Lcd.setTextColor(WHITE, BLACK);
+    M5.Lcd.setCursor(20, 100);
+    M5.Lcd.print(__DATE__);
 
-    // Send JSON through WebSocket.
-    ws.textAll(jsonMsg);
-
-    // Send JSON to serial.
-    Serial.println(jsonMsg);
+    M5.Lcd.setCursor(20, 130);
+    M5.Lcd.print(__TIME__);
 }
+#endif
