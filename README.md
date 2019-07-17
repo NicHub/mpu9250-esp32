@@ -11,17 +11,21 @@ The project must be compiled with *PlarformIO Core 4.0*.
 
 2. Create manually a file called `src/WifiSettings.h` with the following content:
 
-    #pragma once
-    const char *ssid        = "..."; // SSID of your WiFi router.
-    const char *password    = "..."; // Pasword  of your WiFi router.
-    const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
-    const char *ap_password = ""; // let blank
+```cpp
+#pragma once
+const char *ssid        = "..."; // SSID of your WiFi router.
+const char *password    = "..."; // Pasword  of your WiFi router.
+const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
+const char *ap_password = ""; // let blank
+```
 
 3. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a M5Stack, you can set it to `m5stack-core-esp32`. In case of problem, you’ll have to add your particular board model.
 
 4. Upload the web files on the ESP32 with the following command:
 
-    platformio run --target uploadfs
+```bash
+platformio run --target uploadfs
+```
 
 5. Upload the code to the ESP32 with PlatformIO.
 
@@ -54,12 +58,14 @@ The calculation of Euler angles has a Gimbal lock problem. If you want to see it
 
 I used the following library <https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library>. Unfortunately, it cannot be used directly because the definition of `min()` and `max()` functions are missing so I put a copy of this library in the `lib` directory and I added the missing definition at line 97 in `inv_mpu.c`:
 
-    #ifndef min
-    #define min(X,Y) (((X) < (Y)) ? (X) : (Y))
-    #endif
-    #ifndef max
-    #define max(X,Y) (((X) > (Y)) ? (X) : (Y))
-    #endif
+```cpp
+#ifndef min
+#define min(X,Y) (((X) < (Y)) ? (X) : (Y))
+#endif
+#ifndef max
+#define max(X,Y) (((X) > (Y)) ? (X) : (Y))
+#endif
+```
 
 > Note that this lib is available twice in the PlatformIO registry ([lib 944](https://platformio.org/lib/show/944/SparkFun%20MPU-9250%20Digital%20Motion%20Processing%20(DMP)) and [lib 5399](https://platformio.org/lib/show/5399/SparkFun%20MPU-9250%20Digital%20Motion%20Processing%20(DMP))). Both of them are missing the definition of `min()` and `max()`.
 
