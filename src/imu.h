@@ -38,6 +38,6 @@ public:
     euler_angles_t quatToEulerWikipedia(quaternion_t q);
     euler_angles_t quatToEulerEuclideanspace(quaternion_t q1);
     void toJSON(char *jsonMsg);
-    void setupIMU();
+    void setupIMU(unsigned short fifoRate = 10);
     unsigned short readIMU();
 };
