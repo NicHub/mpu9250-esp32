@@ -64,14 +64,14 @@ function CubeBegin() {
     var arrow_A_Geometry = new THREE.ConeGeometry(15, 30, 32);
     var arrow_A_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("orangered"), wireframe: drawWireframe });
     var arrow_A_Mesh = new THREE.Mesh(arrow_A_Geometry, arrow_A_Material);
-    arrow_A_Mesh.rotation.z = Math.PI / 180 * 270;
-    arrow_A_Mesh.position.x = 75;
+    arrow_A_Mesh.rotation.z = Math.PI / 180 * 90;
+    arrow_A_Mesh.position.x = -75;
 
     var cyl_A_Geometry = new THREE.CylinderGeometry(5, 5, 60, 32);
     var cyl_A_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("hsl(0, 0%, 90%)"), wireframe: drawWireframe });
     var cyl_A_Mesh = new THREE.Mesh(cyl_A_Geometry, cyl_A_Material);
-    cyl_A_Mesh.rotation.z = Math.PI / 180 * 270;
-    cyl_A_Mesh.position.x = 30;
+    cyl_A_Mesh.rotation.z = Math.PI / 180 * 90;
+    cyl_A_Mesh.position.x = -30;
 
     var arrow_B_Geometry = new THREE.ConeGeometry(15, 30, 32);
     var arrow_B_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("mediumseagreen"), wireframe: drawWireframe });
@@ -88,14 +88,14 @@ function CubeBegin() {
     var arrow_C_Geometry = new THREE.ConeGeometry(15, 30, 32);
     var arrow_C_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("dodgerblue"), wireframe: drawWireframe });
     var arrow_C_Mesh = new THREE.Mesh(arrow_C_Geometry, arrow_C_Material);
-    arrow_C_Mesh.rotation.x = Math.PI / 180 * 90;
-    arrow_C_Mesh.position.z = 75;
+    arrow_C_Mesh.rotation.x = Math.PI / 180 * 270;
+    arrow_C_Mesh.position.z = -75;
 
     var cyl_C_Geometry = new THREE.CylinderGeometry(5, 5, 60, 32);
     var cyl_C_Material = new THREE.MeshBasicMaterial({ color: new THREE.Color("hsl(0, 0%, 90%)"), wireframe: drawWireframe });
     var cyl_C_Mesh = new THREE.Mesh(cyl_C_Geometry, cyl_C_Material);
-    cyl_C_Mesh.rotation.x = Math.PI / 180 * 90;
-    cyl_C_Mesh.position.z = 30;
+    cyl_C_Mesh.rotation.x = Math.PI / 180 * 270;
+    cyl_C_Mesh.position.z = -30;
 
     axis3d = new THREE.Group();
     axis3d.add(cube_Mesh);
@@ -106,8 +106,11 @@ function CubeBegin() {
     axis3d.add(arrow_C_Mesh);
     axis3d.add(cyl_C_Mesh);
     scene.add(axis3d);
-    camera.position.set(100, -100, -100);
-    camera.up = new THREE.Vector3(0, 0, -1);
+    // camera.position.set(100, -100, -100);
+    // camera.up = new THREE.Vector3(0, 0, -1);
+    // camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.position.set(-100, -100, 100);
+    camera.up = new THREE.Vector3(0, 0, 1);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     render();
 }
