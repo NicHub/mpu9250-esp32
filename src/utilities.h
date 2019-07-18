@@ -36,6 +36,9 @@ void setupSerial()
 }
 
 #ifdef BOARD_M5STACK_CORE_ESP32
+
+#define M5_SCREEN_BRIGHTNESS 10
+
 /**
  *
  */
@@ -44,6 +47,14 @@ void setupM5Stack()
     // Serial port is started separately
     // for compatibility with other boards.
     M5.begin(true, false, true, true);
+
+    // Starting message.
+    delay(10);
+    M5.Lcd.setBrightness(M5_SCREEN_BRIGHTNESS);
+    M5.Lcd.setTextSize(3);
+    M5.Lcd.setTextColor(YELLOW, BLACK);
+    M5.Lcd.setCursor(70, 90);
+    M5.Lcd.print("STARTING...");
 }
 
 /**
@@ -51,7 +62,7 @@ void setupM5Stack()
  */
 void printInfoM5Stack()
 {
-    M5.Lcd.setBrightness(32);
+    M5.Lcd.setBrightness(M5_SCREEN_BRIGHTNESS);
 
     M5.Lcd.setTextSize(3);
     M5.Lcd.fillScreen(BLACK);
