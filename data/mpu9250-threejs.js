@@ -131,7 +131,7 @@ function getIP(callback) {
         else {
             // We are on the development server.
             // Manually set ESP IP address.
-            ip = "192.168.2.16";
+            ip = "192.168.2.15";
             document.title = "DEV[" + ans + "]—" + document.title;
         }
         console.log("ip = " + ip);
@@ -145,7 +145,8 @@ function webSocketHandle(ip) {
         return;
     }
 
-    var ws = new WebSocket("ws://" + ip + "/ws", ["arduino"]);
+    // var ws = new WebSocket("ws://" + ip + "/ws", ["arduino"]);
+    var ws = new WebSocket("ws://127.0.0.1:5678/");
     var T1 = +new Date();
     var deltaTmax = 0;
     ws.onmessage = function (evt) {
@@ -155,9 +156,9 @@ function webSocketHandle(ip) {
         var refreshRate = 1000 / deltaTms;
         T1 = T2;
 
-        var data = JSON.parse(evt.data);
         infoPanel.innerHTML = "<pre>" + evt.data + "</pre><pre>Refresh rate = "
             + refreshRate.toFixed() + " Hz (ΔT = " + deltaTms.toFixed() + " ms | ΔTmax = " + deltaTmax + "ms)</pre>";
+        var data = JSON.parse(evt.data);
 
         if (!data.hasOwnProperty("quat") || !data.hasOwnProperty("euler")) {
             return;

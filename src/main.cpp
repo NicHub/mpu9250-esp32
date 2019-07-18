@@ -72,6 +72,8 @@ void loop()
     if (status != 0)
         Serial.println(jsonMsg);
 
+    Serial.println(jsonMsg);
+    return;
     // For debug of lag.
     static uint8_t cpt = 0;
     if ((++cpt % 20) == 0)
