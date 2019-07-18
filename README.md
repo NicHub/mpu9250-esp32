@@ -58,7 +58,7 @@ The communication is sometimes frozen from a few hundred milliseconds up to seve
 
 The calculation of Euler angles has a Gimbal lock problem. If you want to see it:
 
-- Open the *threejs* and the *dials* pages side by side.
+- Open the dashboard web page.
 - Find the orientation of the MPU9250 that makes all 3 dials vertical (at 12 o’clock).
 - Rotate the MPU only around X and then only around Z and check the output in both *threejs* and *dials* windows. They should show consistent results.
 - Rotate the MPU around Y only and you’ll see that the results are OK in *threejs* but not in *dials*. This is because *threejs* uses quaternions and *dials* uses Euler angles.
