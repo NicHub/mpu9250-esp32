@@ -1,15 +1,21 @@
 
 # M P U 9 2 5 0    on    E S P 3 2
 
-Measure the orientation of a MPU9250 IMU and display the results on a web page served by an ESP32.
+Measure the orientation of a MPU9250 IMU and display the results on a web page served by an ESP32. Communication is done with WebSocket.
 
-The project must be compiled with *PlarformIO Core 4.0*.
+The project must be compiled with *PlatformIO Core 4.0*.
 
 ## INSTRUCTIONS
 
-1. Connect the MPU9250 to the I²C port of the ESP32.
+1. Make sure you have the latest PlatformIO revision (PlatformIO Core 4.0 at this time):
 
-2. Create manually a file called `src/WifiSettings.h` with the following content:
+```bash
+platformio upgrade
+```
+
+2. Connect the MPU9250 to the I²C port of the ESP32.
+
+3. Create manually a file called `src/WifiSettings.h` with the following content:
 
 ```cpp
 #pragma once
@@ -19,21 +25,21 @@ const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
 const char *ap_password = ""; // let blank
 ```
 
-3. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a *M5Stack*, you can set it to `m5stack-core-esp32`. In case of problem, you’ll have to add your particular board model.
+4. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a *M5Stack*, you can set it to `m5stack-core-esp32`. In case of problem, you will need to add your own board model.
 
-4. Upload the web files on the ESP32 with the following command:
+5. Upload the web files on the ESP32 with the following command:
 
 ```bash
 platformio run --target uploadfs
 ```
 
-5. Upload the code to the ESP32 with PlatformIO.
+6. Upload the code to the ESP32 with PlatformIO.
 
-6. Check the IP adresses in the serial output. You may need to reboot your ESP to see them.
+7. Check the IP addresses in the serial output. You may need to reboot your ESP to see them.
     - Use `STATION IP address` to connect to your ESP32 via your WiFi router.
     - Use `SOFT-AP IP address` to connect your computer directly to your ESP32.
 
-7. Navigate to the IP address of the ESP32 in your web browser. You should see the pages below. You can open all of them in separate windows at the same time.
+8. Navigate to the IP address of the ESP32 in your web browser. You should see the pages below. You can open all of them in separate windows at the same time.
 
 <p align="center">
 <img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-index.jpg" />
@@ -44,7 +50,7 @@ platformio run --target uploadfs
 
 ## LIMITATIONS
 
-The system lags sometimes a little bit, i.e. sometimes the communication freezes for a few hundreds of milliseconds up to several seconds. This is probably due to WiFi performances. I performed a test where the JSON data is sent over serial to a Python script that forwards it via WebSocket to the web page (Python script and web page on the same computer). The blocking lag (when the communication is frozen) is gone, but serial communication has a greater delay in response, i.e. the movements are reflected on the screen with a small delay that is noticeable.
+The communication is sometimes frozen from a few hundred milliseconds up to several seconds. This is probably due to WiFi performance. I performed a test where JSON data is sent via the serial port to a Python script that transmits it via WebSocket to the web page (the Python script and web page run on the same computer). In this setup the communication does not freeze anymore, but the serial communication has a longer response time, i.e. the movements are reflected on the screen with a small delay that is noticeable.
 
 The calculation of Euler angles has a Gimbal lock problem. If you want to see it:
 

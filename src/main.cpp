@@ -24,7 +24,7 @@
 #include <M5Stack.h>
 #endif
 
-AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
+AsyncWebSocket ws("/ws");
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
 
@@ -44,6 +44,9 @@ void setup()
     scanNetwork();
     setupWebServer();
     imu1.setupIMU(fifoRate);
+#ifdef BOARD_M5STACK_CORE_ESP32
+    printInfoM5Stack();
+#endif
 }
 
 /**

@@ -41,13 +41,22 @@ void setupSerial()
  */
 void setupM5Stack()
 {
+    // Serial port is started separately
+    // for compatibility with other boards.
     M5.begin(true, false, true, true);
+}
 
-    // Display compilation date and time on M5STACK.
+/**
+ *
+ */
+void printInfoM5Stack()
+{
+    M5.Lcd.setBrightness(32);
+
     M5.Lcd.setTextSize(3);
     M5.Lcd.fillScreen(BLACK);
 
-    M5.Lcd.setTextColor(BLUE, BLACK);
+    M5.Lcd.setTextColor(WHITE, BLACK);
     M5.Lcd.setCursor(20, 10);
     M5.Lcd.print("COMPILATION");
 
@@ -55,10 +64,17 @@ void setupM5Stack()
     M5.Lcd.print("DATE AND TIME");
 
     M5.Lcd.setTextColor(WHITE, BLACK);
-    M5.Lcd.setCursor(20, 100);
+    M5.Lcd.setCursor(20, 90);
     M5.Lcd.print(__DATE__);
 
-    M5.Lcd.setCursor(20, 130);
+    M5.Lcd.setCursor(20, 120);
     M5.Lcd.print(__TIME__);
+
+    M5.Lcd.setTextColor(YELLOW, BLACK);
+    M5.Lcd.setCursor(20, 170);
+    M5.Lcd.print(WiFi.localIP());
+
+    M5.Lcd.setCursor(20, 200);
+    M5.Lcd.print(WiFi.softAPIP());
 }
 #endif
