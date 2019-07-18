@@ -106,7 +106,9 @@ function CubeBegin() {
     axis3d.add(arrow_C_Mesh);
     axis3d.add(cyl_C_Mesh);
     scene.add(axis3d);
-    camera.position.z = 200;
+    camera.position.set(100, -100, -100);
+    camera.up = new THREE.Vector3(0, 0, -1);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
     render();
 }
 
@@ -132,7 +134,7 @@ function getIP(callback) {
         else {
             // We are on the development server.
             // Manually set ESP IP address.
-            ip = "192.168.1.113";
+            // ip = "192.168.1.113";
             ip = "192.168.2.16";
             document.title = "DEV[" + ans + "]—" + document.title;
         }
