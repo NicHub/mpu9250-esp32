@@ -132,8 +132,8 @@ function getIP(callback) {
         else {
             // We are on the development server.
             // Manually set ESP IP address.
-            ip = "192.168.2.16";
             ip = "192.168.1.113";
+            ip = "192.168.2.16";
             document.title = "DEV[" + ans + "]—" + document.title;
         }
         console.log("ip = " + ip);
