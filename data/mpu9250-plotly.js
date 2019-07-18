@@ -76,11 +76,11 @@
 
         ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
-            if (!data.hasOwnProperty("quaternions") || !data.hasOwnProperty("angles")) {
+            if (!data.hasOwnProperty("quat") || !data.hasOwnProperty("euler")) {
                 return;
             }
             Plotly.extendTraces('divgraph1', {
-                y: [[data.angles.A], [data.angles.B], [data.angles.C]]
+                y: [[data.euler.eA], [data.euler.eB], [data.euler.eC]]
             }, [0, 1, 2], 10)
         };
     }
