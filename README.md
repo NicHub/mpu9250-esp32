@@ -42,10 +42,9 @@ platformio run --target uploadfs
 8. Navigate to the IP address of the ESP32 in your web browser. You should see the pages below. You can open all of them in separate windows at the same time.
 
 <p align="center">
-<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-index.jpg" />
-<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-svg-dials.jpg" />
-<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-threejs.jpg" />
-<img width=700px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-plotly.jpg" />
+<img width=615px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-index.jpg" />
+<img width=615px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-dashboard.jpg" />
+<img width=615px alt="MPU9250 on ESP32" src="doc/mpu9250-esp32-plotly.jpg" />
 </p>
 
 ## LIMITATIONS
