@@ -1,7 +1,7 @@
 
 # M P U 9 2 5 0    on    E S P 3 2
 
-Measure the orientation of a MPU9250 IMU and display the results on a web page served by an ESP32. Communication is done with WebSocket.
+Measure the orientation of a MPU9250 IMU and display the results on a web page served by an ESP32. Communication is done with WebSocket. The 3D visualisation is made with [three.js](https://threejs.org), and the 2D dials are handmade in SVG.
 
 The project must be compiled with *PlatformIO Core 4.0*.
 
@@ -13,7 +13,7 @@ The project must be compiled with *PlatformIO Core 4.0*.
 platformio upgrade
 ```
 
-2. Connect the MPU9250 to the I²C port of the ESP32.
+2. Connect the MPU9250 to the I²C port of the ESP32. Note that this step is not necessary for the M5Stack because it includes an MPU9250.
 
 3. Create manually a file called `src/WifiSettings.h` with the following content:
 
