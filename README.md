@@ -44,7 +44,7 @@ platformio run --target uploadfs
 
 ## LIMITATIONS
 
-The system lags sometimes a little bit. This is probably due to WiFi performances.
+The system lags sometimes a little bit, i.e. sometimes the communication freezes for a few hundreds of milliseconds up to several seconds. This is probably due to WiFi performances. I performed a test where the JSON data is sent over serial to a Python script that forwards it via WebSocket to the web page (Python script and web page on the same computer). The blocking lag (when the communication is frozen) is gone, but serial communication has a greater delay in response, i.e. the movements are reflected on the screen with a small delay that is noticeable.
 
 The calculation of Euler angles has a Gimbal lock problem. If you want to see it:
 
