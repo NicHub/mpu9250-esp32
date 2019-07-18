@@ -50,7 +50,11 @@ platformio run --target uploadfs
 
 ## LIMITATIONS
 
+### Communication lag
+
 The communication is sometimes frozen from a few hundred milliseconds up to several seconds. This is probably due to WiFi performance. I performed a test where JSON data is sent via the serial port to a Python script that transmits it via WebSocket to the web page (the Python script and web page run on the same computer). In this setup the communication does not freeze anymore, but the serial communication has a longer response time, i.e. the movements are reflected on the screen with a small delay that is noticeable.
+
+### Gimbal lock
 
 The calculation of Euler angles has a Gimbal lock problem. If you want to see it:
 
