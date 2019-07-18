@@ -13,7 +13,7 @@ The project must be compiled with *PlatformIO Core 4.0*.
 platformio upgrade
 ```
 
-2. Connect the MPU9250 to the I²C port of the ESP32. Note that this step is not necessary for the (*M5Stack*)[https://m5stack.com] because it includes an MPU9250.
+2. Connect the MPU9250 to the I²C port of the ESP32. Note that this step is not necessary for the [*M5Stack*](https://m5stack.com) because it includes an MPU9250.
 
 3. Create manually a file called `src/WifiSettings.h` with the following content:
 
