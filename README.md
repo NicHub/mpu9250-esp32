@@ -1,7 +1,7 @@
 
-# M P U 9 2 5 0    on    E S P 3 2
+# M P U 9 2 5 0    o n    E S P 3 2
 
-Measure the orientation of a MPU9250 IMU and display the results on a web page served by an ESP32. Communication is done with WebSocket. The 3D visualisation is made with [three.js](https://threejs.org), and the 2D dials are handmade in SVG.
+Measure the orientation of a MPU9250 IMU and display the results on a web page served by an ESP32. Communication is done with WebSocket. The 3D visualization is made with [three.js](https://threejs.org), and the 2D dials are handmade in SVG.
 
 The project must be compiled with *PlatformIO Core 4.0*.
 
@@ -25,7 +25,7 @@ const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
 const char *ap_password = ""; // let blank
 ```
 
-4. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a *M5Stack*, you can set it to `m5stack-core-esp32`. In case of problem, you will need to add your own board model.
+4. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a *M5Stack*, you can set it to `m5stack-core-esp32`. In case of a problem, you will need to add your own board model.
 
 5. Upload the web files on the ESP32 with the following command:
 
@@ -60,7 +60,7 @@ I also performed a test where JSON data is sent via the serial port to a Python 
 The calculation of Euler angles has a *Gimbal Lock* problem. If you want to see it:
 
 - Open the dashboard web page.
-- Find the orientation of the MPU9250 that makes all 3 Euler angles near to 0°.
+- Find the orientation of the MPU9250 that makes all three Euler angles near to 0°.
 - Rotate the MPU only around X and then only around Z and check both the 3D visualization and the Euler angles outputs. They should show consistent results.
 - Rotate the MPU around Y only and you’ll see that the results are OK in the 3D visualization but the Euler angles are not.
 
