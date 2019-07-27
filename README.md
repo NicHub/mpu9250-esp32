@@ -51,7 +51,7 @@ platformio run --target uploadfs
 
 ### Communication lag
 
-Communication is sometimes frozen from a few hundred milliseconds up to several seconds. This is probably due to WiFi performance. I checked with another WiFi router and the results were much better, but not perfect.
+Communication is sometimes frozen from a few hundred milliseconds up to several seconds. This is probably due to WiFi performance. I checked with another WiFi router and the results were much better, but not perfect. When tested in soft AP mode it worked flawlessly with my Android phone, but not with my Mac.
 
 I also performed a test where JSON data is sent via the serial port to a Python script that transmits it via WebSocket to the web page (the Python script and web page ran on the same computer). In this setup the communication does not freeze anymore, but the serial communication has a longer response time, i.e. the movements are reflected on the screen with a small delay that is noticeable.
 
