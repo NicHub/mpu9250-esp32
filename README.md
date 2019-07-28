@@ -19,10 +19,11 @@ platformio upgrade
 
 ```cpp
 #pragma once
-const char *ssid        = "..."; // SSID of your WiFi router.
-const char *password    = "..."; // Pasword  of your WiFi router.
-const char *ap_ssid     = "ESP32-IMU-"; // Name of the ESP in soft-AP mode.
-const char *ap_password = ""; // let blank
+const char *ssid = "...";           // SSID of your WiFi router.
+const char *password = "...";       // Password of your WiFi router.
+const char *ap_ssid = "ESP32-IMU-"; // SSID of the ESP32 WiFi network in soft-AP mode (15 char max).
+const char *ap_password = "";       // Password of the ESP32 WiFi network in soft-AP mode.
+                                    // Must be 8 char min or empty for no password.
 ```
 
 4. Update the file `platformio.ini`. For most of the ESP32 models, the variable `default_envs` must be set to `esp32doit-devkit-v1`. If you have a *M5Stack*, you can set it to `m5stack-core-esp32`. In case of a problem, you will need to add your own board model.
