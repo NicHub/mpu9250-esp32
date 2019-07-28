@@ -26,7 +26,7 @@ char apssid[33];
 /**
  * onWsEvent
  */
-void onWsEvent(AsyncWebSocket *server,
+void WebServerApp::onWsEvent(AsyncWebSocket *server,
                AsyncWebSocketClient *client,
                AwsEventType type,
                void *arg,
@@ -172,7 +172,7 @@ void onWsEvent(AsyncWebSocket *server,
 /**
  *
  */
-void writeServerInfoToFile()
+void WebServerApp::writeServerInfoToFile()
 {
     File file = SPIFFS.open("/info.json", FILE_WRITE);
 
@@ -225,7 +225,7 @@ void writeServerInfoToFile()
     file.print(
         R"rawText("compilation_date":  ")rawText");
     file.print(
-        __DATE__);
+        COMPILATION_DATE);
     file.println(
         R"rawText(",)rawText");
 
@@ -233,7 +233,7 @@ void writeServerInfoToFile()
     file.print(
         R"rawText("compilation_time":  ")rawText");
     file.print(
-        __TIME__);
+        COMPILATION_TIME);
     file.println(
         R"rawText(")rawText");
 
@@ -245,7 +245,7 @@ void writeServerInfoToFile()
 /**
  * setupWebServer
  */
-void setupWebServer()
+void WebServerApp::setupWebServer()
 {
     strcpy(apssid, ap_ssid);
     strcat(apssid, WiFi.macAddress().c_str());
@@ -347,12 +347,16 @@ void setupWebServer()
      *
      */
     SPIFFS.begin();
-    writeServerInfoToFile();
 
     /**
      *
      */
-    ws.onEvent(onWsEvent);
+    this->writeServerInfoToFile();
+
+    /**
+     *
+     */
+    ws.onEvent(this->onWsEvent);
 
     /**
      *
@@ -514,7 +518,7 @@ void setupWebServer()
 /**
  * inverseBubbleSortIndexes
  */
-void inverseBubbleSortIndexes(int inputArray[], int indexes[], int arraySize)
+void WebServerApp::inverseBubbleSortIndexes(int inputArray[], int indexes[], int arraySize)
 {
     for (int i = 0; i < arraySize; i++)
         indexes[i] = i;
@@ -539,7 +543,7 @@ void inverseBubbleSortIndexes(int inputArray[], int indexes[], int arraySize)
 /**
  * scanNetwork
  */
-void scanNetwork()
+void WebServerApp::scanNetwork()
 {
     Serial.println("# NETWORK SCAN");
     WiFi.disconnect();

@@ -24,6 +24,7 @@
 #include <M5Stack.h>
 #endif
 
+WebServerApp wsa;
 AsyncWebSocket ws("/ws");
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
@@ -41,8 +42,8 @@ void setup()
     setupM5Stack();
 #endif
     setupSerial();
-    scanNetwork();
-    setupWebServer();
+    wsa.scanNetwork();
+    wsa.setupWebServer();
     imu1.setupIMU(fifoRate);
 #ifdef BOARD_M5STACK_CORE_ESP32
     printInfoM5Stack();
@@ -75,6 +76,7 @@ void loop()
     if (status != 0)
         Serial.println(jsonMsg);
 
+#if false
     // For debug of lag.
     static uint8_t cpt = 0;
     if ((++cpt % 20) == 0)
@@ -83,4 +85,5 @@ void loop()
         Serial.print("\n");
     }
     Serial.print(".");
+#endif
 }

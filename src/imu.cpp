@@ -96,14 +96,14 @@ void IMU::toJSON(char *jsonMsg)
     // Quaternion values are, by default, stored in Q30 long
     // format. calcQuat turns them into a float between -1 and 1
     quaternion_t quat = {
-        imu.calcQuat(imu.qw),
-        imu.calcQuat(imu.qx),
-        imu.calcQuat(imu.qy),
-        imu.calcQuat(imu.qz)};
+        imu1.calcQuat(imu1.qw),
+        imu1.calcQuat(imu1.qx),
+        imu1.calcQuat(imu1.qy),
+        imu1.calcQuat(imu1.qz)};
 
 #define ALGO EUCLIDEANSPACE
 #if ALGO == SPARKFUN
-    euler_angles_t eulerAngles = {imu.roll, imu.pitch, imu.yaw};
+    euler_angles_t eulerAngles = {imu1.roll, imu1.pitch, imu1.yaw};
 #elif ALGO == WIKIPEDIA
     euler_angles_t eulerAngles = quatToEulerWikipedia(quat);
 #elif ALGO == EUCLIDEANSPACE
@@ -124,8 +124,8 @@ void IMU::toJSON(char *jsonMsg)
  */
 void IMU::setupIMU(unsigned short fifoRate)
 {
-    // Call imu.begin() to verify communication and initialize
-    if (imu.begin() != INV_SUCCESS)
+    // Call imu1.begin() to verify communication and initialize
+    if (imu1.begin() != INV_SUCCESS)
     {
         Serial.println("Unable to communicate with MPU-9250");
         Serial.println("Check connections, and try again.");
@@ -136,7 +136,7 @@ void IMU::setupIMU(unsigned short fifoRate)
         }
     }
 
-    imu.dmpBegin(true * DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
+    imu1.dmpBegin(true * DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
                      true * DMP_FEATURE_GYRO_CAL, // Use gyro calibration
                  fifoRate);                       // Set DMP FIFO rate to 10 Hz
                                                   // DMP_FEATURE_LP_QUAT can also be used. It uses the
@@ -149,7 +149,7 @@ void IMU::setupIMU(unsigned short fifoRate)
  */
 int8_t IMU::readIMU(char *jsonMsg)
 {
-    unsigned short fifoAvailable = imu.fifoAvailable();
+    unsigned short fifoAvailable = imu1.fifoAvailable();
 
     // Check for new data in the FIFO
     if (!fifoAvailable)
@@ -160,7 +160,7 @@ int8_t IMU::readIMU(char *jsonMsg)
     }
 
     // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
-    if (imu.dmpUpdateFifo() != INV_SUCCESS)
+    if (imu1.dmpUpdateFifo() != INV_SUCCESS)
     {
         sprintf(jsonMsg, R"rawText({"msg":"FIFO NOT UPDATED","Tms":%lu})rawText",
                 millis());
@@ -169,7 +169,7 @@ int8_t IMU::readIMU(char *jsonMsg)
 
     // computeEulerAngles can be used -- after updating the
     // quaternion values -- to estimate roll, pitch, and yaw
-    imu.computeEulerAngles();
+    imu1.computeEulerAngles();
     this->toJSON(jsonMsg);
 
     return 0;

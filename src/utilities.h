@@ -29,9 +29,9 @@ void setupSerial()
     Serial.begin(BAUD_RATE);
     Serial.print("\n\n##########################");
     Serial.print("\nCOMPILATION DATE AND TIME:\n");
-    Serial.print(__DATE__);
+    Serial.print(COMPILATION_DATE);
     Serial.print("\n");
-    Serial.print(__TIME__);
+    Serial.print(COMPILATION_TIME);
     Serial.print("\n##########################\n\n");
 }
 
@@ -76,10 +76,10 @@ void printInfoM5Stack()
 
     M5.Lcd.setTextColor(WHITE, BLACK);
     M5.Lcd.setCursor(20, 90);
-    M5.Lcd.print(__DATE__);
+    M5.Lcd.print(COMPILATION_DATE);
 
     M5.Lcd.setCursor(20, 120);
-    M5.Lcd.print(__TIME__);
+    M5.Lcd.print(COMPILATION_TIME);
 
     M5.Lcd.setTextColor(YELLOW, BLACK);
     M5.Lcd.setCursor(20, 170);

@@ -31,13 +31,17 @@ extern AsyncWebServer server;
 extern AsyncWebSocket ws;
 extern AsyncEventSource events;
 
-void onWsEvent(AsyncWebSocket *server,
-               AsyncWebSocketClient *client,
-               AwsEventType type,
-               void *arg,
-               uint8_t *data,
-               size_t len);
-void writeServerInfoToFile();
-void setupWebServer();
-void inverseBubbleSortIndexes(int inputArray[], int indexes[], int arraySize);
-void scanNetwork();
+class WebServerApp
+{
+public:
+    static void onWsEvent(AsyncWebSocket *server,
+                   AsyncWebSocketClient *client,
+                   AwsEventType type,
+                   void *arg,
+                   uint8_t *data,
+                   size_t len);
+    void writeServerInfoToFile();
+    void setupWebServer();
+    void inverseBubbleSortIndexes(int inputArray[], int indexes[], int arraySize);
+    void scanNetwork();
+};

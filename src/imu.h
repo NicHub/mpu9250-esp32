@@ -37,7 +37,7 @@ private:
     void toJSON(char *jsonMsg);
 
 public:
-    MPU9250_DMP imu;
+    MPU9250_DMP imu1;
     euler_angles_t quatToEulerWikipedia(quaternion_t q);
     euler_angles_t quatToEulerEuclideanspace(quaternion_t q1);
     void setupIMU(unsigned short fifoRate = 10U);
