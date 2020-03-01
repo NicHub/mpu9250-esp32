@@ -27,11 +27,11 @@ char apssid[33];
  * onWsEvent
  */
 void WebServerApp::onWsEvent(AsyncWebSocket *server,
-               AsyncWebSocketClient *client,
-               AwsEventType type,
-               void *arg,
-               uint8_t *data,
-               size_t len)
+                             AsyncWebSocketClient *client,
+                             AwsEventType type,
+                             void *arg,
+                             uint8_t *data,
+                             size_t len)
 {
     if (type == WS_EVT_CONNECT)
     {
@@ -385,6 +385,17 @@ void WebServerApp::setupWebServer()
      */
     server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request) {
         request->send(200, "text/plain", String(ESP.getFreeHeap()));
+    });
+
+    /**
+     *
+     */
+    server.onFileUpload([](AsyncWebServerRequest *request, const String &filename, size_t index, uint8_t *data, size_t len, bool final) {
+        if (!index)
+            Serial.printf("UploadStart: %s\n", filename.c_str());
+        Serial.printf("%s", (const char *)data);
+        if (final)
+            Serial.printf("UploadEnd: %s (%u)\n", filename.c_str(), index + len);
     });
 
     /**
