@@ -31,7 +31,7 @@ AsyncEventSource events("/events");
 
 IMU imu1;
 
-const unsigned short fifoRate = 20U; // IMU refresh rate in Hz.
+const unsigned short fifoRate = 10U; // IMU refresh rate in Hz.
 
 /**
  *
@@ -41,10 +41,12 @@ void setup()
 #ifdef BOARD_M5STACK_CORE_ESP32
     setupM5Stack();
 #endif
+
     setupSerial();
     wsa.scanNetwork();
     wsa.setupWebServer();
     imu1.setupIMU(fifoRate);
+
 #ifdef BOARD_M5STACK_CORE_ESP32
     printInfoM5Stack();
 #endif

@@ -137,11 +137,11 @@ void IMU::setupIMU(unsigned short fifoRate)
     }
 
     imu1.dmpBegin(true * DMP_FEATURE_6X_LP_QUAT |  // Enable 6-axis quat
-                     true * DMP_FEATURE_GYRO_CAL, // Use gyro calibration
-                 fifoRate);                       // Set DMP FIFO rate to 10 Hz
-                                                  // DMP_FEATURE_LP_QUAT can also be used. It uses the
-                                                  // accelerometer in low-power mode to estimate quat's.
-                                                  // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
+                      true * DMP_FEATURE_GYRO_CAL, // Use gyro calibration
+                  fifoRate);                       // Set DMP FIFO rate in Hz
+                                                   // DMP_FEATURE_LP_QUAT can also be used. It uses the
+                                                   // accelerometer in low-power mode to estimate quat's.
+                                                   // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
 }
 
 /**
